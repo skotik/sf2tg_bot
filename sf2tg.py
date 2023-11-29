@@ -70,7 +70,7 @@ def ParseMessages(m, p_text='', is_fwd=False):
                                 url_open(bot_url+"/sendMessage", six.ensure_binary(url_encode(data)))
                             if (c_a['type'] == 'doc'):
                                 (doc_size, doc_type) = getUrlFileSize(c_a['doc']['url'])
-                                print('fs: '+str(doc_size) + ' ft: '+doc_type)
+                                print("\nfs: " + str(doc_size) + ' ft: '+doc_type)
                                 if (doc_size < 10*1024*1024):
                                     docdata = url_open(c_a['doc']['url'])
                                     data = {'chat_id': tg_id, 'parse_mode': 'HTML', 'caption': six.ensure_str(sVkUser + '' + c_m['text'] + ("\nfwd: " + p_text if p_text else '') + "\n" + c_a['doc']['title'])}
@@ -81,7 +81,7 @@ def ParseMessages(m, p_text='', is_fwd=False):
                                     url_open(bot_url+"/sendMessage", six.ensure_binary(url_encode(data)))
                     except HTTPError as e:
                         pass
-                        print(e.fp.read())
+                        print("\n" + e.fp.read())
                         exit()
                 else:
                     data = {'chat_id': tg_id, 'parse_mode': 'HTML', 'text': six.ensure_str(sVkUser + '' + c_m['text'] + ('fwd: ' + p_text if p_text else ''))}
@@ -125,9 +125,11 @@ while True:
         data = {'act': 'a_check', 'wait': 25, 'mode': 34, 'version': 19, 'key': vkLongPollServer['response']['key'], 'ts': vkLongPollServer['response']['ts']}
         req = url_request(url="https://"+vkLongPollServer['response']['server'], headers=headers, data=six.ensure_binary(url_encode(data)))
         vkEvent = json.loads(url_open(req, timeout=30).read())
-        print(vkEvent)
+        print(vkEvent, end="\r")
         if not vkEvent.get('ts', False):
             vkEvent['ts'] = vkLastTs
+        elif vkLastTs != vkEvent['ts']:
+            print()
         if ((vkEvent.get('failed', False) == 2) or (vkEvent.get('error') and vkEvent['error'].get('error_code') == 5)):
             access_token = getAccessToken()
             vkLongPollServer = getLongPollServer()
@@ -144,6 +146,7 @@ while True:
 #                    req = url_request(url="https://api.vk.com/method/messages.getLongPollHistory",headers=headers,data=six.ensure_binary(url_encode(data)))
                     vkLongPollHistory = json.loads(url_open(req).read())
                     if not vkLongPollHistory.get('response', False):
+                        print("")
                         print(vkLongPollHistory)
                     ParseMessages(vkLongPollHistory['response']['messages']['items'])
                     vkLastTs = vkEvent['ts']
