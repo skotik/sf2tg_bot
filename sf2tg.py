@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import json
+import socket
+from time import sleep
 # import pprint
 import six
 import my
@@ -156,6 +158,9 @@ while True:
     except KeyboardInterrupt:
         exit()
         pass
+    except socket.timeout:
+        print("\nSocket timeout! sleep 1 minute")
+        sleep(60)
 # req["response"]["messages"]["items"], req["response"]["profiles"]
 # updates [[10004, 10, 3, 50, -205879084, 1701052252, u'x', {u'title': u' ... '}, {}, 50, 0]]]
 # {u'ts': 1811110834, u'updates': []}
