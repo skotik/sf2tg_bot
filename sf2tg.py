@@ -121,6 +121,7 @@ def getLongPollServer():
 access_token = getAccessToken()
 vkLongPollServer = getLongPollServer()
 vkLastTs = vkLongPollServer['response']['ts']
+vkLastPts = vkLongPollServer['response']['pts']
 print("Pool start\n")
 while True:
     try:
@@ -142,7 +143,7 @@ while True:
         if vkEvent.get('updates'):
             for vkUpdate in vkEvent['updates']:
                 if (vkUpdate[0] == 10004 and vkUpdate[4] in group_id):
-                    data = {"extended": 1, "ts": vkLastTs, "fields": "id,first_name,last_name", "access_token": access_token, "v": '5.199'}
+                    data = {"extended": 1, "pts": vkLastPts, "fields": "id,first_name,last_name", "access_token": access_token, "v": '5.199'}
 #                    pprint.pprint(vkUpdate)
                     req = url_request(url="https://api.vk.com/method/messages.getLongPollHistory", data=six.ensure_binary(url_encode(data)))
 #                    req = url_request(url="https://api.vk.com/method/messages.getLongPollHistory",headers=headers,data=six.ensure_binary(url_encode(data)))
@@ -155,6 +156,7 @@ while True:
                         vkLastTs = vkEvent['ts']
 #                    pprint.pprint(vkLongPollHistory)
                     break
+            vkLastPts=vkEvent['pts']
         vkLastTs = vkEvent['ts']
     except KeyboardInterrupt:
         exit()
