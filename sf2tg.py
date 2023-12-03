@@ -150,8 +150,9 @@ while True:
                     if not vkLongPollHistory.get('response', False):
                         print("")
                         print(vkLongPollHistory)
-                    ParseMessages(vkLongPollHistory['response']['messages']['items'])
-                    vkLastTs = vkEvent['ts']
+                    else:
+                        ParseMessages(vkLongPollHistory['response']['messages']['items'])
+                        vkLastTs = vkEvent['ts']
 #                    pprint.pprint(vkLongPollHistory)
                     break
         vkLastTs = vkEvent['ts']
