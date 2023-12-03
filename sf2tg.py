@@ -121,13 +121,14 @@ def getLongPollServer():
 access_token = getAccessToken()
 vkLongPollServer = getLongPollServer()
 vkLastTs = vkLongPollServer['response']['ts']
+vkLastPts = vkLongPollServer['response']['pts']
 print("Pool start\n")
 while True:
     try:
         data = {'act': 'a_check', 'wait': 25, 'mode': 34, 'version': 19, 'key': vkLongPollServer['response']['key'], 'ts': vkLongPollServer['response']['ts']}
         req = url_request(url="https://"+vkLongPollServer['response']['server'], headers=headers, data=six.ensure_binary(url_encode(data)))
         vkEvent = json.loads(url_open(req, timeout=30).read())
-        print(vkEvent, end="\r")
+        six.print_(vkEvent, end="\r")
         if not vkEvent.get('ts', False):
             vkEvent['ts'] = vkLastTs
         elif vkLastTs != vkEvent['ts']:
@@ -142,12 +143,12 @@ while True:
         if vkEvent.get('updates'):
             for vkUpdate in vkEvent['updates']:
                 if (vkUpdate[0] == 10004 and vkUpdate[4] in group_id):
-                    data = {"extended": 1, "ts": vkLastTs, "fields": "id,first_name,last_name", "access_token": access_token, "v": '5.199'}
+                    data = {"extended": 1, "pts": vkLastPts, "fields": "id,first_name,last_name", "access_token": access_token, "v": '5.199'}
                     req = url_request(url="https://api.vk.com/method/messages.getLongPollHistory", data=six.ensure_binary(url_encode(data)))
                     vkLongPollHistory = json.loads(url_open(req).read())
                     if ((vkLongPollHistory.get('failed', False) == 2) or (vkLongPollHistory.get('error') and vkLongPollHistory['error'].get('error_code') == 5)):
                         access_token = getAccessToken()
-                        data = {"extended": 1, "ts": vkLastTs, "fields": "id,first_name,last_name", "access_token": access_token, "v": '5.199'}
+                        data = {"extended": 1, "pts": vkLastPts, "fields": "id,first_name,last_name", "access_token": access_token, "v": '5.199'}
                         req = url_request(url="https://api.vk.com/method/messages.getLongPollHistory", data=six.ensure_binary(url_encode(data)))
                         vkLongPollHistory = json.loads(url_open(req).read())
 
@@ -159,6 +160,7 @@ while True:
                         vkLastTs = vkEvent['ts']
 #                    pprint.pprint(vkLongPollHistory)
                     break
+            vkLastPts=vkEvent['pts']
         vkLastTs = vkEvent['ts']
     except KeyboardInterrupt:
         exit()
