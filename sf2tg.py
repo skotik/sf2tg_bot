@@ -128,7 +128,7 @@ while True:
         data = {'act': 'a_check', 'wait': 25, 'mode': 34, 'version': 19, 'key': vkLongPollServer['response']['key'], 'ts': vkLongPollServer['response']['ts']}
         req = url_request(url="https://"+vkLongPollServer['response']['server'], headers=headers, data=six.ensure_binary(url_encode(data)))
         vkEvent = json.loads(url_open(req, timeout=30).read())
-        print(vkEvent, end="\r")
+        six.print_(vkEvent, end="\r")
         if not vkEvent.get('ts', False):
             vkEvent['ts'] = vkLastTs
         elif vkLastTs != vkEvent['ts']:
