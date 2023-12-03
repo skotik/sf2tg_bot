@@ -143,10 +143,14 @@ while True:
             for vkUpdate in vkEvent['updates']:
                 if (vkUpdate[0] == 10004 and vkUpdate[4] in group_id):
                     data = {"extended": 1, "ts": vkLastTs, "fields": "id,first_name,last_name", "access_token": access_token, "v": '5.199'}
-#                    pprint.pprint(vkUpdate)
                     req = url_request(url="https://api.vk.com/method/messages.getLongPollHistory", data=six.ensure_binary(url_encode(data)))
-#                    req = url_request(url="https://api.vk.com/method/messages.getLongPollHistory",headers=headers,data=six.ensure_binary(url_encode(data)))
                     vkLongPollHistory = json.loads(url_open(req).read())
+                    if ((vkLongPollHistory.get('failed', False) == 2) or (vkLongPollHistory.get('error') and vkLongPollHistory['error'].get('error_code') == 5)):
+                        access_token = getAccessToken()
+                        data = {"extended": 1, "ts": vkLastTs, "fields": "id,first_name,last_name", "access_token": access_token, "v": '5.199'}
+                        req = url_request(url="https://api.vk.com/method/messages.getLongPollHistory", data=six.ensure_binary(url_encode(data)))
+                        vkLongPollHistory = json.loads(url_open(req).read())
+
                     if not vkLongPollHistory.get('response', False):
                         print("")
                         print(vkLongPollHistory)
