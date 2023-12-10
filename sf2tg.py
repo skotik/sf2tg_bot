@@ -49,7 +49,7 @@ def getUrlFileSize(url):
 
 def ParseMessages(m, p_text='', is_fwd=False):
     for c_m in m:
-        if (c_m['peer_id'] in group_id or is_fwd):
+        if (is_fwd or c_m.get('peer_id',False) in group_id ):
             vkUser = next(item for item in vkLongPollHistory['response']['profiles'] if item["id"] == c_m['from_id'])
             sVkUser = "<b>"+vkUser['first_name']+" "+vkUser['last_name']+"</b>\n"
             if (c_m.get('fwd_messages')):
