@@ -86,6 +86,7 @@ def ParseMessages(m, p_text='', is_fwd=False):
                         print("\n" + e.fp.read())
                         exit()
                 else:
+                    if(c_m.get('action',False)): continue
                     data = {'chat_id': tg_id, 'parse_mode': 'HTML', 'text': six.ensure_str(sVkUser + '' + c_m['text'] + ('fwd: ' + p_text if p_text else ''))}
                     url_open(bot_url+"/sendMessage", six.ensure_binary(url_encode(data)))
 
