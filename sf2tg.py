@@ -9,6 +9,7 @@ from six.moves.urllib.request import Request as url_request
 from six.moves.urllib.request import urlopen as url_open
 from six.moves.urllib.parse import urlencode as url_encode
 from six.moves.urllib.error import HTTPError as HTTPError
+from six.moves.urllib.error import URLError as URLError
 
 group_id = my.group_id
 tg_id = my.tg_id
@@ -168,6 +169,13 @@ while True:
         pass
     except socket.timeout:
         print("\nSocket timeout! sleep 1 minute")
+        sleep(60)
+    except URLError as e:
+#        if isinstance(e.reason, socket.timeout):
+        print("\nURL Error:"+e.reason)
+        sleep(60)
+    except Exception as err:
+        print("\nUnexpected: "+err)
         sleep(60)
 # req["response"]["messages"]["items"], req["response"]["profiles"]
 # updates [[10004, 10, 3, 50, -205879084, 1701052252, u'x', {u'title': u' ... '}, {}, 50, 0]]]
